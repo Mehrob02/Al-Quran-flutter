@@ -1,6 +1,6 @@
 # itube
 
-A Al-Quran project created using Flutter with a programming language [Dart](https://flutter.dev/).
+A Al-Quran project created using Flutter with a programming language [Dart](https://dart.dev/).
 
 ## How to contact
 
