@@ -1,6 +1,10 @@
 # itube
 
-A new Flutter project.
+A Al-Quran project created using Flutter with a programming language [Dart](https://flutter.dev/).
+
+## How to contact
+
+If you have any suggestions you can email me in mehrobjonabdulvahobov@gmail.com or develop.team.m2@gmail.com or there is Feedback page in App
 
 ## Getting Started
 
