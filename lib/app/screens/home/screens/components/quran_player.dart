@@ -2,17 +2,17 @@
 
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:itube/app/screens/home/pages/homePage.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:itube/app/screens/home.dart';
+import 'package:itube/app/screens/home/screens/Settings.dart';
 import 'package:itube/app/screens/home/screens/components/neu_box.dart';
-import 'package:itube/theme_provider/provider.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:itube/app/screens/home/screens/components/shadow_box.dart';
+import 'package:itube/quran_provider/models/surahs.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,7 +34,9 @@ class _QuranPlayerState extends State<QuranPlayer> {
   bool _isMenuOpened = false;
   bool _isAnimationCompleated=false;
   bool _floatingPlayer = false;
+  bool _isSurahListOpened  = false;
   int currentIndex = 0;
+  ScrollController scrollController = ScrollController();
   AudioPlayer _player = AudioPlayer();
   Duration? _currentDuration;
   Duration? _position;
@@ -43,6 +45,7 @@ class _QuranPlayerState extends State<QuranPlayer> {
     setState(() {
       currentIndex--;
       playSurah(currentIndex);
+      _isPaused=true;
     });
   }
 
@@ -50,7 +53,15 @@ class _QuranPlayerState extends State<QuranPlayer> {
     setState(() {
       currentIndex++;
       playSurah(currentIndex);
+      _isPaused=true;
     });
+  }
+  void playSurahByIndex(int index){
+    setState(() {
+      currentIndex = index;
+    });
+    playSurah(currentIndex);
+     _isPaused=true;
   }
 
   void playSurah(int index) {
@@ -76,9 +87,7 @@ class _QuranPlayerState extends State<QuranPlayer> {
     _player = AudioPlayer();
     playSurah(currentIndex);
     _player.onPlayerComplete.listen((event) {
-      setState(() {
-        _isPaused = false;
-      });
+      
       if (_isLoopEnabled) {
         _isPaused = true;
         playSurah(currentIndex);
@@ -89,7 +98,15 @@ class _QuranPlayerState extends State<QuranPlayer> {
         });
         playSurah(currentIndex);
       }else{
-        _currentDuration=Duration.zero;
+         if (currentIndex != 113) {
+           next();
+            }else{
+_currentDuration=Duration.zero;
+setState(() {
+        _isPaused = false;
+      });
+        }
+        
       }
     });
     _player.onPositionChanged.listen((event) async {
@@ -103,6 +120,13 @@ class _QuranPlayerState extends State<QuranPlayer> {
 
 void showFloatingPlayer(BuildContext context) {
   }
+
+ void showSurahList(BuildContext context){
+    setState(() {
+     _isMenuOpened=false;  
+     _isSurahListOpened=true;
+    });
+   }
 
   @override
   void dispose() {
@@ -232,9 +256,9 @@ void showFloatingPlayer(BuildContext context) {
                         });
                       },
                       icon: _isLoopEnabled
-                          ? Icon(Icons.repeat)
+                          ? Icon(Icons.repeat_one)
                           : Icon(
-                              Icons.repeat,
+                              Icons.repeat_one,
                               color: Colors.grey.shade400,
                             ),
                     ),
@@ -250,14 +274,24 @@ void showFloatingPlayer(BuildContext context) {
                 ),
                 SizedBox(height: 25),
                 NeuBox(
-                  child: LinearPercentIndicator(
-                    lineHeight: 10,
-                    percent: _currentDuration != null && _position != null
-                        ? (_currentDuration!.inSeconds / _position!.inSeconds)
-                        : 0,
-                    barRadius: Radius.circular(5),
-                    backgroundColor: Colors.transparent,
-                  ),
+                  child: 
+                  // LinearPercentIndicator(
+                  //   lineHeight: 10,
+                  //   percent: _currentDuration != null && _position != null
+                  //       ? (_currentDuration!.inSeconds / _position!.inSeconds)
+                  //       : 0,
+                  //   barRadius: Radius.circular(5),
+                  //   backgroundColor: Colors.transparent,
+                  // ),
+                   Slider(
+                    max: _position != null? (_position!.inSeconds).toDouble():0,
+                    min: 0,
+                    value:  _currentDuration != null?(_currentDuration!.inSeconds).toDouble(): 0,
+                    onChanged: (value){
+                      _player.seek(Duration(seconds: value.toInt()));
+                    },
+                    
+                    )
                 ),
                 SizedBox(height: 40),
                 SizedBox(
@@ -269,7 +303,7 @@ void showFloatingPlayer(BuildContext context) {
                               child: IconButton(
                                   style: currentIndex == 0
                                       ? ButtonStyle(
-                                          iconColor: MaterialStatePropertyAll(
+                                          foregroundColor: MaterialStatePropertyAll(
                                               Colors.grey.shade400))
                                       : ButtonStyle(),
                                   onPressed: () {
@@ -313,13 +347,14 @@ void showFloatingPlayer(BuildContext context) {
                       Expanded(
                           child: NeuBox(
                               child: IconButton(
-                                  style: currentIndex != 114
-                                      ? ButtonStyle()
-                                      : ButtonStyle(
-                                          iconColor: MaterialStatePropertyAll(
-                                              Colors.grey.shade400)),
+                                  style: currentIndex == 113
+                                      ? ButtonStyle(
+                                        foregroundColor: MaterialStatePropertyAll(Colors.grey.shade400)
+                                        )
+                                      :ButtonStyle() ,
                                   onPressed: () {
-                                    if (currentIndex != 114) {
+                                    debugPrint(currentIndex.toString());
+                                    if (currentIndex != 113) {
                                       next();
                                     }
                                   },
@@ -401,25 +436,37 @@ void showFloatingPlayer(BuildContext context) {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Row(
+                                          // Row(
+                                          //   mainAxisAlignment:
+                                          //       MainAxisAlignment.spaceBetween,
+                                          //   crossAxisAlignment:
+                                          //       CrossAxisAlignment.center,
+                                          //   children: [
+                                          //     Text("Reciter"),
+                                          //     Text(
+                                          //         "Mishari bin Rashid Alafasy"),
+                                          //   ],
+                                          // ),
+                                          // Row(
+                                          //   mainAxisAlignment:
+                                          //       MainAxisAlignment.spaceBetween,
+                                          //   crossAxisAlignment:
+                                          //       CrossAxisAlignment.center,
+                                          //   children: [
+                                          //     Text("Surah"),
+                                          //     Text(surahs[currentIndex]),
+                                          //   ],
+                                          // ),
+                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              Text("Reciter"),
-                                              Text(
-                                                  "Mishari bin Rashid Alafasy"),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Text("Surah"),
-                                              Text(surahs[currentIndex]),
+                                              Text("Surah List"),
+                                              IconButton(onPressed: (){
+                                                showSurahList(context);
+                                              }, icon: Icon(Icons.my_library_music_rounded)),
                                             ],
                                           ),
                                           Row(
@@ -456,9 +503,10 @@ void showFloatingPlayer(BuildContext context) {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                            RichText(text: TextSpan(
+                                            RichText(
+                                              text: TextSpan(
                                               children: [
-                                                TextSpan(text: "All audios are taken \nfrom ",),
+                                                TextSpan(text: "All audios are taken \nfrom ", style: TextStyle(color: Colors.blueGrey)),
                                                 TextSpan(text: "surahquran.com",style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color:Colors.red, decoration: TextDecoration.underline))
@@ -470,7 +518,7 @@ void showFloatingPlayer(BuildContext context) {
                                                     setState(() {
                                                       _isMenuOpened = false;
                                                     });
-                                                    launch('https://qurancentral.com/');
+                                                    launch('https://surahquran.com/');
                                                   },
                                                   icon:
                                                       Icon(Icons.arrow_outward))
@@ -498,7 +546,79 @@ void showFloatingPlayer(BuildContext context) {
             )
           ]),
         ),
-      )),
+      ),
+      bottomSheet:  AnimatedContainer(
+                    duration:
+                        Duration(milliseconds: 300),
+                    height: _isSurahListOpened
+                        ? MediaQuery.of(context).size.height *2 / 3
+                        : 0,     
+                        child: NeuBox(child: 
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 5,
+                                child: ListView.builder(
+                                itemCount: surahs.length,
+                                itemBuilder:(context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        setState(() {
+                                           playSurahByIndex(index);
+                                        });
+                                      },
+                                      onDoubleTap: (){
+                                        setState(() {
+                                           playSurahByIndex(index);
+                                        });
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [ 
+                                          Row(
+                                            children: [
+                                                            Padding(
+                                                              padding: const EdgeInsets.all(10.0),
+                                                              child: ClipRRect(
+                                                              borderRadius: BorderRadius.circular(8),
+                                                              child: SizedBox(
+                                                                  height: 60,
+                                                                  child: Image.network(
+                                                                    "https://cdns-images.dzcdn.net/images/artist/bad685cc810fc6a0333e72528ec228a4/500x500.jpg",
+                                                                    fit: BoxFit.cover,
+                                                                  ))),
+                                                            ),
+                                                                Column(
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  children: [
+                                                                    Text(surahs[index], style: TextStyle(fontWeight: FontWeight.w600,fontSize: 20),),
+                                                                    Text("Mishari bin Rashid Alafasy"),
+                                                                  ],
+                                                                )
+                                            ],
+                                          ),
+                                          index==currentIndex?SizedBox(width: 60, child: Lottie.asset(
+                                            kDebugMode ?"Animation1712941068031.json":"assets/Animation1712941068031.json",
+                                            animate: _isPaused
+                                            )):SizedBox(),
+                                        ],
+                                      ),
+                                    )
+                                  );
+                                },),),
+                                Expanded(flex:1,child: ShadowBox(child: TextButton(child: Text("Close"), onPressed: (){setState(() {
+                                  _isSurahListOpened=false;
+                                });},),) ,),
+                            ],
+                          ),
+                        )),
+                        )
+      ),
     ));
   }
   //   ))

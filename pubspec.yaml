@@ -109,7 +109,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/WelcomeScreenBackground.jpg
-    - assets/Animation_1711017476264.json
+    - assets/Animation1712941068031.json
     - assets/background_video.mp4
     - assets/compass.svg
     - assets/compass.png
@@ -117,6 +117,7 @@ flutter:
     - assets/nail.png
     - assets/translation.json
     - assets/surah_title/surah_1.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

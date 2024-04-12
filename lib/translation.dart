@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 
@@ -5,7 +6,7 @@ class Translations {
   late Map<String, dynamic> _translations;
 
   Future<void> loadTranslations() async { 
-    String jsonString = await rootBundle.loadString('assets/translation.json');
+    String jsonString = await rootBundle.loadString(kDebugMode? 'translation.json':'assets/translation.json');
     _translations = json.decode(jsonString);
   }
 

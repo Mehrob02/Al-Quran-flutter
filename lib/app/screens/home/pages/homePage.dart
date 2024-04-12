@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:itube/app/screens/home/screens/Settings.dart';
+import 'package:itube/app/screens/home/screens/components/shadow_box.dart';
 import 'package:itube/app/screens/home/screens/reader.dart';
 import 'package:itube/Surahs/surahs.dart';
 import 'package:itube/app/screens/home/screens/reader_new.dart';
@@ -58,31 +59,33 @@ List <int> ayahs=[
 ];
 String currentLanguage = '';
 bool listItemPressed=false;
-Card gridItem(BuildContext context, int index){
-return Card(
-  shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(20)),
-  child: TextButton(
-    onPressed: () {
-      Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => reader(surahs[index],ayahs[index],0)),
-          );
-    },
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-      Container( alignment: Alignment.center, child: Text((index+1).toString(),style: const TextStyle(fontSize: 20, color: Colors.red),),),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+Widget gridItem(BuildContext context, int index){
+return ShadowBox(
+  child: Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: TextButton(
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => reader(surahs[index],ayahs[index],0)),
+            );
+      },
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(surahs[index],style: const TextStyle(fontSize: 18,color: Colors.red),textAlign: TextAlign.center),
-          Text("${ayahs[index]} verses",style: const TextStyle(fontSize: 12,color: Colors.red), textAlign: TextAlign.center,)
-        ],
-      ),
-                  
-    ]),
+        Container( alignment: Alignment.center, child: Text((index+1).toString(),style: const TextStyle(fontSize: 20, color: Colors.red),),),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(surahs[index],style: const TextStyle(fontSize: 18,color: Colors.red),textAlign: TextAlign.center),
+            Text("${ayahs[index]} verses",style: const TextStyle(fontSize: 12,color: Colors.red), textAlign: TextAlign.center,)
+          ],
+        ),
+                    
+      ]),
+    ),
   ),
 );
 }
@@ -193,7 +196,10 @@ Widget build(BuildContext context) {
       ),
       itemCount: 114,
       itemBuilder: (BuildContext context, int index) {
-        return gridItem(context,index);
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: gridItem(context,index),
+        );
       },
     )
     :
