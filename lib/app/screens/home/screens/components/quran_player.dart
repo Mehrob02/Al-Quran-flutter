@@ -15,7 +15,6 @@ import 'package:itube/quran_provider/models/surahs.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../models/playlist_provider.dart';
 
 class QuranPlayer extends StatefulWidget {
@@ -114,7 +113,7 @@ setState(() {
       _position = await _player.getDuration();
       setState(() {});
     });
-
+//_player.setVolume(0.5);
     super.initState();
   }
 
