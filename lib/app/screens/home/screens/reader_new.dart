@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:itube/app/screens/home/pages/homePage.dart';
 import 'package:itube/app/screens/home/screens/components/shadow_box.dart';
 import 'package:itube/my_test/mytestfile.dart';
@@ -19,14 +20,35 @@ Widget surahPageViewer(int index, BuildContext context) {
 if(MediaQuery.of(context).size.width>400&&MediaQuery.of(context).size.height<400){
   return
   kDebugMode?
-   Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png', fit: BoxFit.fitWidth,)
+   ColorFiltered(
+    colorFilter:ColorFilter.mode(
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(136, 233, 201, 132):Color.fromARGB(255, 52, 38, 28),
+      BlendMode.dstATop
+      ),
+      child:Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png', fit: BoxFit.fitWidth,))
    :
-   Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png', fit: BoxFit.fitWidth,);
+  ColorFiltered(
+    colorFilter:ColorFilter.mode(
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(136, 233, 201, 132):Color.fromARGB(255, 52, 38, 28),
+      BlendMode.dstATop
+      ),
+      child: Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png', fit: BoxFit.fitWidth,)
+  );
 }else{
  return 
  kDebugMode?
- Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png',)
- :Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png',);
+ ColorFiltered(
+    colorFilter:ColorFilter.mode(
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(136, 233, 201, 132):Color.fromARGB(255, 52, 38, 28),
+      BlendMode.dstATop
+      ),
+      child: Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png',))
+ : ColorFiltered(
+    colorFilter:ColorFilter.mode(
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(136, 233, 201, 132):Color.fromARGB(255, 52, 38, 28),
+      BlendMode.dstATop
+      ),
+      child:Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png',));
 }
         
         
@@ -63,6 +85,13 @@ List <String> _getTitles(int page){
   
   @override
   void initState() {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+     SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitDown,
+    ]);
     currentPage = widget.page+1;
     pageController = PageController(initialPage: currentPage-1);
     initTranslationLanguage();
@@ -71,6 +100,13 @@ List <String> _getTitles(int page){
     }
     super.initState();
   } 
+  @override
+  void dispose() {
+    // Release all sources and dispose the player.
+     SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,]);
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
    
@@ -171,6 +207,7 @@ List <String> _getTitles(int page){
                            TextButton.icon(onPressed: (){
                             setState(() {
                               _isShowTranslationEnabled=true;
+                              _isHideMenu=false;
                             });
                            }, icon: Icon(Icons.library_books), label: Text("translation")),
                            Text("data")

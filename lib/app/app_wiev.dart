@@ -62,8 +62,21 @@ void initState() {
         primaryColor: Colors.red,
       ),
       home:
-      !isWelcomePageShown
-      ?
+      isWelcomePageShown
+      ?RepositoryProvider<AuthenticationBloc>(
+      create: (context) => AuthenticationBloc(
+      userRepository:widget.userRepository
+      ),
+      child: BlocBuilder<AuthenticationBloc,AuthenticationState>(builder: (context,state){
+          if(state.status!=AuthenticationStatus.authenticated){
+          return registrationPage();
+          }else{
+        return MyApp();
+          }
+          
+        }
+      ),
+    ):
           Scaffold(
          body: SingleChildScrollView(
   child: SizedBox(
@@ -139,21 +152,7 @@ void initState() {
                 )),
               ),
             )
-      :
-       RepositoryProvider<AuthenticationBloc>(
-      create: (context) => AuthenticationBloc(
-      userRepository:widget.userRepository
-      ),
-      child: BlocBuilder<AuthenticationBloc,AuthenticationState>(builder: (context,state){
-          if(state.status!=AuthenticationStatus.authenticated){
-          return registrationPage();
-          }else{
-        return MyApp();
-          }
-          
-        }
-      ),
-    )
+       
     );
   }
 }

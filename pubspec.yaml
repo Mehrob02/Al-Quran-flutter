@@ -119,7 +119,7 @@ flutter:
     - assets/translation.json
     - assets/surah_title/surah_1.png
     - assets/quran-images/
-
+    - assets/welcomeIcon.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
