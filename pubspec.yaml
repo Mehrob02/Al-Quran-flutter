@@ -116,7 +116,7 @@ flutter:
     - assets/needle.svg
     - assets/nail.png
     - assets/translation.json
-    - assets/surah_title/surah_1.png
+    - assets/quran-images/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

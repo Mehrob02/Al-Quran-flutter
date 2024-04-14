@@ -26,6 +26,9 @@ alMuddassir,alQiyama,alInsan,alMursalat,anNabaa, anNaziat,  Abasa,  atTakwir, al
 alAla,alGashyaa, alFajr, alBalad, ashShams,alLayl,adDhuha,ashShahr,atTin,alAlaq,alQadr, alBayyina,azZalzala,alAdiyat,
 alQariah,atTakathur,alAsr,alHumazah,alFil,Quraysh,alMaun,alKawthar,alKafirun,anNasr,alMasad,alIkhlas,alFalaq,anNas,
 ];
+List<int> pages=[
+  1,2
+];
 List surahsTranslationRu=[
 translation_russian_ALFatiha,  translation_russian_alBaqarah, translation_russian_AliImran,    translation_russian_anNisa,     translation_russian_ALMaaida,
 translation_russian_AlAnam,    translation_russian_AlAraf,    translation_russian_AlAnfal,     translation_russian_AtTawbah,   translation_russian_Yunus,
