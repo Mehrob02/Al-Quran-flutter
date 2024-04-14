@@ -1,156 +1,235 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-import 'dart:async';
-import 'package:audioplayers/audioplayers.dart';
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:itube/Surahs/surahs.dart';
-import 'package:itube/app/screens/home/screens/Settings.dart';
-import 'package:itube/app/screens/home.dart';
 import 'package:itube/app/screens/home/pages/homePage.dart';
-import 'package:itube/app/screens/home/screens/components/aboutAyahViewer.dart';
-import 'package:just_bottom_sheet/drag_zone_position.dart';
-import 'package:just_bottom_sheet/just_bottom_sheet.dart';
-import 'package:just_bottom_sheet/just_bottom_sheet_configuration.dart';
+import 'package:itube/app/screens/home/screens/components/shadow_box.dart';
+import 'package:itube/quran_provider/models/ayahtranslation.dart';
+import 'package:itube/quran_provider/quran_repository.dart';
+import 'package:quran/quran.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../pages/bookMarksPage.dart';
-
-Color bookMarked = const Color.fromARGB(255, 237, 235, 235);
-Color notBookMarked = Colors.white;
-Widget ayahWiever(
-    BuildContext context, List<String> surah, int index, String surahName) {
-      final ayahViewerscrollController = ScrollController();
-  return Text("${index+1}");
-}
-
-// ignore: camel_case_types
-class reader_new extends StatefulWidget {
-  final String surah;
-  final int ayahs;
-  final int indexToScroll;
-
-  reader_new(this.surah, this.ayahs, this.indexToScroll);
-
+class ReaderNew extends StatefulWidget{
+  const ReaderNew({super.key, required this.page});
+  final int page;
   @override
-  _reader_newState createState() => _reader_newState();
+  State<ReaderNew> createState() => _ReaderNewState();
 }
 
-class _reader_newState extends State<reader_new> {
-  final ScrollController _scrollController = ScrollController();
-  final targetKey = GlobalKey();
-  AudioPlayer player = AudioPlayer();
-  final String text = "This is a sample text. It contains several sentences. Each sentence is clickable.";
+Widget surahPageViewer(int index, BuildContext context) {
+if(MediaQuery.of(context).size.width>400&&MediaQuery.of(context).size.height<400){
+  return
+  kDebugMode?
+   Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png', fit: BoxFit.fitWidth,)
+   :
+   Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png', fit: BoxFit.fitWidth,);
+}else{
+ return 
+ kDebugMode?
+ Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png',)
+ :Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png',);
+}
+        
+        
+}
+class _ReaderNewState extends State<ReaderNew> {
+  late int currentPage;
+  late PageController pageController;
+  bool _isHideMenu =false;
+  bool _isShowTranslationEnabled=false;
+  late String getTitlesString;
+  List<AyahTranslation>? ayahtranslation;
+Future initTranslationLanguage() async{
+    currentLanguage = await _getTranslationLanguage();
+  }
+  
+  Future<String> _getTranslationLanguage() async{
+    var prefs = await  SharedPreferences.getInstance();
+  return prefs.getString("ayahTranslationLanguage")??'en';
+  }
+  void _loadAyahTranslation(int surah) async {
+    ayahtranslation = await QuanRepository().getSurah(surah);
+    setState(() {});
+  }
+List <String> _getTitles(int page){
+    return getPageData(page)
+    .map((e) => surahs[int.parse(e['surah'].toString())-1])
+    .toList();
+  }
+  List <int> _getSurahNumbers(int page){
+    return getPageData(page)
+    .map((e) => int.parse(e['surah'].toString()))
+    .toList();
+  }
   
   @override
   void initState() {
-    super.initState(); 
-    initFontSize();
-  }
-   // импортируем для использования функции Future.delayed
-
-
-
-Future<void> playSound(int surah, int ayah) async {
-  if (surah != 1 && ayah == 1) {
-    await player.play(UrlSource('https://quranaudio.pages.dev/1/1_1.mp3'));
-    await Future.delayed(Duration(seconds: 7));
-    await player.play(UrlSource('https://quranaudio.pages.dev/1/${surah}_${ayah}.mp3'));
-  } else {
-    await player.play(UrlSource('https://quranaudio.pages.dev/1/${surah}_${ayah}.mp3'));
-  }
-}
-
-
-
- Future initFontSize() async{
-    fontSize = await _getFontSize();
-  }
-  
-  Future<double> _getFontSize() async{
-    var prefs = await  SharedPreferences.getInstance();
-  return prefs.getDouble("ayahFontSize")??23;
-  }
-  
-
-  void onBookmarkChanged(List surah, bool isBookmarked, int index,) {
-    showMenu(context: context, position: RelativeRect.fill, items: [
-      PopupMenuItem(
-        value: 'option1',
-        child: Row(children: const [
-          Padding(
-            padding: EdgeInsets.all(4.0),
-            child: Icon(
-              Icons.copy_all,
-              color: Colors.grey,
-            ),
-          ),
-          Text("Copy")
-        ]),
-      ),
-      
-      PopupMenuItem(
-        value: 'option3',
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Icon(Icons.play_arrow, color: Colors.red,),
-            ),
-            Text("Play")
-          ],
-        ),
-      ),
-    ]);
+    currentPage = widget.page+1;
+    pageController = PageController(initialPage: currentPage-1);
+    initTranslationLanguage();
+    for(int i = 0; i<getSurahCountByPage(currentPage);i++){
+    _loadAyahTranslation(_getSurahNumbers(currentPage)[i]);
+    }
+    super.initState();
   }
 
-  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-            title: Text(widget.surah),
-            leading: IconButton(icon:Icon(Icons.arrow_back), onPressed: () {Navigator.pop(context);},),
-            backgroundColor:useMaterial3? Theme.of(context).backgroundColor:Colors.white70,
-            foregroundColor: Colors.red,
-          ),
-       body:ListView(
-      children: [
-        Wrap(
-        //  alignment: WrapAlignment.end,
-          children:[ for(int i =0; i< widget.ayahs; i++)  Text(AlFatiha[i],),]
-          //  AlFatiha.map((sentence) {
-          //   // return GestureDetector(
-          //   //   onTap: () {
-          //   //     // Действие при нажатии на предложение
-          //   //     print('Clicked on: $sentence');
-          //   //     // Здесь можно добавить ваш код для обработки нажатия
-          //   //   },
-          //   //   child: Text(
-          //   //     textDirection: TextDirection.rtl,
-          //   //     style:TextStyle(
-                  
-          //   //     ),
-          //   //     sentence
-          //   //   ),
-          //   // );
-          // }).toList(),
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children:[
+            PageView.builder(
+            controller: pageController,
+            onPageChanged: (pageIndex) {
+              setState(() => currentPage = pageIndex+1);
+              debugPrint("$currentPage");
+              debugPrint(getSurahCountByPage(currentPage).toString());
+            },
+            padEnds: false,
+            reverse: true,
+            itemCount: 604,
+            itemBuilder: (context, index){
+             return MediaQuery.of(context).size.width>400&&MediaQuery.of(context).size.height<400? SingleChildScrollView(
+               child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isHideMenu=!_isHideMenu;
+                    _isShowTranslationEnabled=false;
+                  });
+                },
+                onDoubleTap: () {
+                   setState(() {
+                    _isHideMenu=!_isHideMenu;
+                     _isShowTranslationEnabled=false;
+                  });
+                },
+                child: surahPageViewer(index, context)
+                ),
+             ):GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isHideMenu=!_isHideMenu;
+                    _isShowTranslationEnabled=false;
+                  });
+                },
+                onDoubleTap: () {
+                   setState(() {
+                    _isHideMenu=!_isHideMenu;
+                     _isShowTranslationEnabled=false;
+                  });
+                },
+                child: surahPageViewer(index, context)
+                );
+            }), 
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AnimatedOpacity(
+                  opacity: _isHideMenu?1:0,
+                  curve: Curves.linear,
+                  duration: Duration(milliseconds: 300),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * .15,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        child: ShadowBox(
+                          child: 
+                        Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                               IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_rounded)),
+                               Padding(
+                                 padding: const EdgeInsets.symmetric(horizontal: 8),
+                                 child: Text(_getTitles(currentPage).join(",")),
+                               )
+                        ],)),
+                      ),
+                    ),
+                  ),
+                ),
+                AnimatedOpacity(
+              opacity: _isHideMenu?1:0,
+              curve: Curves.linear,
+              duration: Duration(milliseconds: 300),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * .30,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    child: ShadowBox(
+                      child: 
+                    Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                           TextButton.icon(onPressed: (){
+                            setState(() {
+                              _isShowTranslationEnabled=true;
+                            });
+                           }, icon: Icon(Icons.library_books), label: Text("translation")),
+                           Text("data")
+                    ],)),
+                  ),
+                ),
+              ),
+            ), 
+              ],
+            ), 
+            
+          ]
         ),
+        bottomSheet: AnimatedContainer(
+  duration: Duration(milliseconds: 300),
+  height: _isShowTranslationEnabled ? MediaQuery.of(context).size.height * 2 / 3 : 0,
+  width: MediaQuery.of(context).size.width,
+  color: Colors.white70,
+  child: SingleChildScrollView(
+    child: Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _isShowTranslationEnabled = false;
+            });
+          },
+          child: ShadowBox(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Close"),
+            ),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: getSurahCountByPage(currentPage),
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                Text(_getTitles(currentPage).reversed.toList()[index],style: TextStyle(fontWeight: FontWeight.bold),),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: ayahs[surahs.indexOf(_getTitles(currentPage).reversed.toList()[index])],
+                  itemBuilder: (context, innerIndex) {
+                    return ListTile(
+                    title: Text("${surahsTranslationRu[_getSurahNumbers(currentPage).reversed.toList()[index]-1][innerIndex]}")
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+        
       ],
-    )
-     
-     );
-  }
+    ),
+  ),
+),
 
-  void _scrollToIndex() {
-    if (mounted) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent * widget.indexToScroll / widget.ayahs,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      });
-    }
+      ),
+    );
   }
 }
