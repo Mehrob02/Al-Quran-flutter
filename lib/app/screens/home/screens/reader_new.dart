@@ -146,7 +146,7 @@ List <String> _getTitles(int page){
                                IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back_rounded)),
                                Padding(
                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                 child: Text(_getTitles(currentPage).join(",")),
+                                 child: Text(_getTitles(currentPage).join(","), style: TextStyle(fontWeight: FontWeight.bold),),
                                )
                         ],)),
                       ),
