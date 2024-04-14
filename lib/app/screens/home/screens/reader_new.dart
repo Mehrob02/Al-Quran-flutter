@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:itube/app/screens/home/pages/homePage.dart';
 import 'package:itube/app/screens/home/screens/components/shadow_box.dart';
+import 'package:itube/my_test/mytestfile.dart';
 import 'package:itube/quran_provider/models/ayahtranslation.dart';
 import 'package:itube/quran_provider/quran_repository.dart';
 import 'package:quran/quran.dart';
@@ -69,10 +70,10 @@ List <String> _getTitles(int page){
     _loadAyahTranslation(_getSurahNumbers(currentPage)[i]);
     }
     super.initState();
-  }
-
+  } 
   @override
   Widget build(BuildContext context) {
+   
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -82,7 +83,10 @@ List <String> _getTitles(int page){
             onPageChanged: (pageIndex) {
               setState(() => currentPage = pageIndex+1);
               debugPrint("$currentPage");
-              debugPrint(getSurahCountByPage(currentPage).toString());
+              setState(() {
+                _isShowTranslationEnabled = false;
+                value=1;
+              });
             },
             padEnds: false,
             reverse: true,
@@ -127,12 +131,12 @@ List <String> _getTitles(int page){
                   opacity: _isHideMenu?1:0,
                   curve: Curves.linear,
                   duration: Duration(milliseconds: 300),
-                  child: Padding(
+                  child: _isHideMenu? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
                       height: MediaQuery.of(context).size.height * .15,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         child: ShadowBox(
                           child: 
                         Row(
@@ -147,7 +151,7 @@ List <String> _getTitles(int page){
                         ],)),
                       ),
                     ),
-                  ),
+                  ):SizedBox(),
                 ),
                 AnimatedOpacity(
               opacity: _isHideMenu?1:0,
@@ -182,16 +186,26 @@ List <String> _getTitles(int page){
         ),
         bottomSheet: AnimatedContainer(
   duration: Duration(milliseconds: 300),
-  height: _isShowTranslationEnabled ? MediaQuery.of(context).size.height * 2 / 3 : 0,
+  height: _isShowTranslationEnabled?MediaQuery.of(context).size.height * 2 / 3 : 0,
   width: MediaQuery.of(context).size.width,
   color: Colors.white70,
   child: SingleChildScrollView(
     child: Column(
       children: [
-        GestureDetector(
+       
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: getSurahCountByPage(currentPage),
+          itemBuilder: (context, index) {
+            return MyTest(ayahNumber: ayahs[surahs.indexOf(_getTitles(currentPage).reversed.toList()[index])], surahName: _getTitles(currentPage).reversed.toList()[index], value:1, currentPage: currentPage,index:index);
+          },
+        ),
+         GestureDetector(
           onTap: () {
             setState(() {
               _isShowTranslationEnabled = false;
+              value =1;
             });
           },
           child: ShadowBox(
@@ -201,29 +215,6 @@ List <String> _getTitles(int page){
             ),
           ),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: getSurahCountByPage(currentPage),
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Text(_getTitles(currentPage).reversed.toList()[index],style: TextStyle(fontWeight: FontWeight.bold),),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: ayahs[surahs.indexOf(_getTitles(currentPage).reversed.toList()[index])],
-                  itemBuilder: (context, innerIndex) {
-                    return ListTile(
-                    title: Text("${surahsTranslationRu[_getSurahNumbers(currentPage).reversed.toList()[index]-1][innerIndex]}")
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        ),
-        
       ],
     ),
   ),

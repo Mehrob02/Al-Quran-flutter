@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, prefer_const_constructors
 
 import 'dart:io';
 
@@ -40,16 +40,9 @@ void main() async {
       primaryColor: Colors.red,
     ),                 
 home:appWiev(FirebaseUserRepo())
- // home:MyTest(page: 603)
+ // home:MyTest()
  )
    
   );
 }
-// void main(){
-//   runApp(
-//     MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: MyTest(),
-//     )
-//   );
-// }
+
