@@ -417,6 +417,9 @@ void showFloatingPlayer(BuildContext context) {
                                           _isMenuOpened = !_isMenuOpened;
                                           
                                         });
+                                        setState(() {
+                                  _isSurahListOpened=false;
+                                });
                                       },
                                       icon: Icon(Icons.menu),
                                     ),
@@ -533,7 +536,10 @@ void showFloatingPlayer(BuildContext context) {
                           : IconButton(
                               onPressed: () {
                                 setState(() {
-                                  _isMenuOpened = !_isMenuOpened;
+                                  _isMenuOpened = true;
+                                });
+                                  setState(() {
+                                  _isSurahListOpened=false;
                                 });
                               },
                               icon: Icon(Icons.menu),
@@ -610,9 +616,14 @@ void showFloatingPlayer(BuildContext context) {
                                     )
                                   );
                                 },),),
-                                Expanded(flex:1,child: ShadowBox(child: TextButton(child: Text("Close"), onPressed: (){setState(() {
+                                Expanded(flex:1,child: GestureDetector(
+                                  onTap: (){setState(() {
                                   _isSurahListOpened=false;
-                                });},),) ,),
+                                });},
+                                  child: ShadowBox(
+                                    child: Text("Close"),
+                                  ),
+                                ) ,),
                             ],
                           ),
                         )),

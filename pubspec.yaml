@@ -83,6 +83,7 @@ dependencies:
   flutter_animation_progress_bar: ^2.3.1
   url_launcher: ^6.1.11
   awesome_notifications: ^0.8.2
+  quick_actions: ^1.0.6
 
 dev_dependencies:
   flutter_test:
@@ -116,7 +117,7 @@ flutter:
     - assets/needle.svg
     - assets/nail.png
     - assets/translation.json
-    - assets/quran-images/
+    - assets/surah_title/surah_1.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:itube/app/screens/home/screens/Settings.dart';
+import 'package:itube/app/screens/home/screens/components/reader_viewer.dart';
 import 'package:itube/app/screens/home/screens/components/shadow_box.dart';
 import 'package:itube/app/screens/home/screens/reader.dart';
 import 'package:itube/Surahs/surahs.dart';
@@ -50,9 +51,9 @@ translation_russian_AtTakwir,  translation_russian_AlInfitar, translation_russia
 translation_russian_AtTariq,   translation_russian_AlAla,     translation_russian_AlGhashiyah, translation_russian_AlFajr,     translation_russian_AlBalad, 
 translation_russian_AshShams,  translation_russian_AlLayl,    translation_russian_AdDhuha,     translation_russian_AshShahr,   translation_russian_AtTin,
 translation_russian_AlAlaq,    translation_russian_AlQadr,    translation_russian_AlBayyinah,  translation_russian_AzZalzala,  translation_russian_AlAdiyat,
-translation_russian_AlQariah,  translation_russian_AtTakathur,translation_russian_AlAsr,       translation_russian_AlHumathah, translation_russian_AlMaun,
-translation_russian_AlKawthar, translation_russian_AlKafirun, translation_russian_AnNasr,      translation_russian_AlMasad,    translation_russian_AlIkhlas,
-translation_russian_AlFalaq,   translation_russian_AnNas,
+translation_russian_AlQariah,  translation_russian_AtTakathur,translation_russian_AlAsr,       translation_russian_AlHumathah, translation_russian_AlFil,
+translation_russian_Quraysh,   translation_russian_AlMaun,    translation_russian_AlKawthar,   translation_russian_AlKafirun,  translation_russian_AnNasr,      
+translation_russian_AlMasad,   translation_russian_AlIkhlas,  translation_russian_AlFalaq,     translation_russian_AnNas,
 ];
 String viewSettings=  "List";
 List <int> ayahs=[
@@ -60,30 +61,33 @@ List <int> ayahs=[
 35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,
 5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6
 ];
+List <int>  pages= [1,2,50,77,106,128,151,177,187,208,221,235,249,255,262,267,282,293,305,312,322,332,342,350,359,367,
+  377,385,396,404,411,415,418,428,434,440,446,453,458,467,477,483,489,496,499,502,507,511,515,518,520,523,526,528,531,534,537,
+  542,545,549,551,553,554,556,558,560,562,564,566,568,570,572,574,575,577,578,580,582,583,585,586,587,587,589,590,591,591,592,593,594,
+  595,595,596,596,597,597,598,598,599,599,600,600,601,601,601,602,602,602,603,603,603,604,604,604];
 String currentLanguage = '';
 bool listItemPressed=false;
 Widget gridItem(BuildContext context, int index){
-return ShadowBox(
-  child: Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: TextButton(
-      onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => reader(surahs[index],ayahs[index],0)),
-            );
-      },
+return GestureDetector(
+  onTap: () {
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ReaderViewer(surah: surahs[index],ayahs:ayahs[index],indexToScroll:0)),
+        );
+  },
+  child: ShadowBox(
+    child: Container(
+      width: MediaQuery.of(context).size.width/3,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-        Container( alignment: Alignment.center, child: Text((index+1).toString(),style: const TextStyle(fontSize: 20, color: Colors.red),),),
+        Text((index+1).toString(),style: const TextStyle(fontSize: 30, color: Colors.red),),
         Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(surahs[index],style: const TextStyle(fontSize: 18,color: Colors.red),textAlign: TextAlign.center),
-            Text("${ayahs[index]} verses",style: const TextStyle(fontSize: 12,color: Colors.red), textAlign: TextAlign.center,)
+            Text(surahs[index],style: TextStyle(fontWeight: FontWeight.bold, fontSize: (MediaQuery.of(context).size.width/MediaQuery.of(context).size.height)*25+2,color: Colors.red),textAlign: TextAlign.center),
+            Text("${ayahs[index]} verses",style: TextStyle(fontSize: (MediaQuery.of(context).size.width/MediaQuery.of(context).size.height)*24-5,color: Colors.red), textAlign: TextAlign.center,)
           ],
         ),
                     
