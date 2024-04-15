@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:itube/app/screens/home.dart';
 import 'package:itube/app/screens/home/pages/homePage.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -205,11 +206,22 @@ void showFloatingPlayer(BuildContext context) {
                               )
                             ],
                           ),
-                          Icon(
-                            Icons.star,
+                          IconButton(onPressed: (){
+                            if(favoriteSurahs.contains(currentIndex+1)){
+                              setState(() {
+                                favoriteSurahs.remove(currentIndex + 1);
+                              });
+                            }else{
+                               setState(() {
+                                favoriteSurahs.add(currentIndex + 1);
+                               });
+                            }
+                          }, icon: Icon(
+                           favoriteSurahs.contains(currentIndex+1)? Icons.star:Icons.star_border_outlined,
                             size: 25,
                             color: Colors.red.shade700,
-                          )
+                          )),
+                          
                         ],
                       ),
                     )
@@ -283,6 +295,10 @@ void showFloatingPlayer(BuildContext context) {
                   //   backgroundColor: Colors.transparent,
                   // ),
                    Slider(
+                    overlayColor: MaterialStatePropertyAll(Colors.red),
+                    thumbColor: Colors.red.shade700,
+                    activeColor: Colors.red.shade700,
+                    inactiveColor: Colors.red.shade700,
                     max: _position != null? (_position!.inSeconds).toDouble():0,
                     min: 0,
                     value:  _currentDuration != null?(_currentDuration!.inSeconds).toDouble(): 0,
@@ -610,7 +626,7 @@ void showFloatingPlayer(BuildContext context) {
                                           index==currentIndex?SizedBox(width: 60, child: Lottie.asset(
                                             kDebugMode ?"Animation1712941068031.json":"assets/Animation1712941068031.json",
                                             animate: _isPaused
-                                            )):SizedBox(),
+                                            )):Text((index+1).toString()),
                                         ],
                                       ),
                                     )

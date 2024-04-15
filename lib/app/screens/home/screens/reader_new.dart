@@ -204,13 +204,23 @@ List <String> _getTitles(int page){
                     Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                        IconButton(onPressed: (){
+                          setState(() {
+                            pageController.nextPage(duration: Duration(milliseconds: 800), curve: Curves.linear);
+                          });
+                        }, icon: Icon(Icons.arrow_back)),
                            TextButton.icon(onPressed: (){
                             setState(() {
                               _isShowTranslationEnabled=true;
                               _isHideMenu=false;
                             });
                            }, icon: Icon(Icons.library_books), label: Text("translation")),
-                           Text("data")
+                           Text("Page $currentPage"),
+                            IconButton(onPressed: (){
+                          setState(() {
+                            pageController.previousPage(duration: Duration(milliseconds: 800), curve: Curves.linear);
+                          });
+                        }, icon: Icon(Icons.arrow_forward)),
                     ],)),
                   ),
                 ),

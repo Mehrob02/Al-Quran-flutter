@@ -34,6 +34,7 @@ import 'home/screens/models/playlist_provider.dart';
  bool useMaterial3 = true;
  String? locationCity;
  String? locationCountry;
+ List favoriteSurahs=[];
  List <Color> bookMarkColors =[
 Colors.red,
 Colors.blue,
@@ -50,9 +51,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-     return 
-     
-      MyHomePage(title: 'ITUBE',);
+     return MyHomePage(title: 'ITUBE',);
   }
 }
 
@@ -88,9 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
   var prefs = await SharedPreferences.getInstance();
   await prefs.setString("currentUser", _userName!);
 }
-void _loadCurrentUser() async{
-   _userName = await  _getCurrentUser();
-}
 
   
   void _loadViewSettings() async{
@@ -99,10 +95,6 @@ void _loadCurrentUser() async{
   Future<String> _getViewSettings() async{
     var prefs = await  SharedPreferences.getInstance();
   return prefs.getString("ViewSetting")??"List";
-  }
-  Future<bool> _setuseMaterial3() async{
-    var prefs = await  SharedPreferences.getInstance();
-  return prefs.setBool("auseMaterial3",useMaterial3);
   }
   void onTabTapped(int index) {
     setState(() {
@@ -146,6 +138,7 @@ initConnectivity();
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
    _initStateAsync();
 loadBookmakJson();
+_getCurrentUser();
    // inituseMaterial3();
     _loadViewSettings();
    if(locationCity == null&&locationCountry==null){
@@ -177,7 +170,6 @@ loadBookmakJson();
     try {
       result = await _connectivity.checkConnectivity();
     } on PlatformException catch (e) {
-      print(e.toString());
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -220,7 +212,6 @@ loadBookmakJson();
           _isLoading = false; // Set loading indicator to false when data is loaded
         });
       } catch (error) {
-        print("Error retrieving user data: $error");
         setState(() {
           _isLoading = false; // Set loading indicator to false in case of error
         });

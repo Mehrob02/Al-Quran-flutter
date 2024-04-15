@@ -87,6 +87,7 @@ class _ListenQuranState extends State<ListenQuran> {
           itemCount: 114,
           itemBuilder: (context, index){
             return ListTile(
+            trailing: Text((index+1).toString()),
               title: Text(surahs[index]),
               subtitle: Text("Mishari bin Rashid Alafasy"),
               leading: ClipRRect(borderRadius: BorderRadius.circular(20), child:Image.network("https://cdns-images.dzcdn.net/images/artist/bad685cc810fc6a0333e72528ec228a4/500x500.jpg", fit: BoxFit.cover,)),

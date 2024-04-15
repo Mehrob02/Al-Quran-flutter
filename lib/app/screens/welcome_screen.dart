@@ -53,8 +53,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
             darkTheme: notifier.isDark? notifier.darkTheme : notifier.lightTheme,
 
             theme: ThemeData(
-              primaryColor: Colors.red.shade800,
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.red.shade800),
+              primaryColor: Theme.of(context).primaryColor,
+              colorScheme: ColorScheme.fromSeed(seedColor: Theme.of(context).primaryColor),
               useMaterial3: useMaterial3,
             ),
             home: MyApp());}));
