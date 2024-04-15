@@ -38,7 +38,7 @@ void main() async {
     theme: ThemeData(
       primaryColor: Colors.red,
     ),                 
-  home:WelcomeScreen(userRepository: FirebaseUserRepo())
+  home:appWiev(FirebaseUserRepo())
  )
    
   );

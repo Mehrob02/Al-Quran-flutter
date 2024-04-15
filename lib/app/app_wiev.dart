@@ -29,24 +29,31 @@ class appWiev extends StatefulWidget {
 }
 bool isWelcomePageShown=false;
 class _appWievState extends State<appWiev> {
-  Future inituseMaterial3() async{
-    useMaterial3 = await _getuseMaterial3();
-  }
   Future<bool> _getuseMaterial3() async{
     var prefs = await  SharedPreferences.getInstance();
   return prefs.getBool("auseMaterial3")??true;
   }
 @override
 void initState() {
-   
   _loadIsWelcomePageShown();
- super.initState();
- inituseMaterial3();
+  super.initState();
+  inituseMaterial3();
 }
-  void _loadIsWelcomePageShown() async {
-  isWelcomePageShown = await _getIsWelcomePageShown();
-  setState(() {}); // Обновляем виджет после загрузки значения
+
+void _loadIsWelcomePageShown() async {
+  await Future.microtask(() async {
+    isWelcomePageShown = await _getIsWelcomePageShown();
+    setState(() {}); // Обновляем виджет после загрузки значения
+  });
 }
+
+Future<void> inituseMaterial3() async {
+  await Future.microtask(() async {
+    useMaterial3 = await _getuseMaterial3();
+  });
+}
+
+ 
   Future<bool> _getIsWelcomePageShown() async{
     var prefs = await  SharedPreferences.getInstance();
   return prefs.getBool("isWelcomePageShown")??false;
@@ -64,39 +71,8 @@ void initState() {
         primaryColor: Colors.red,
       ),
       home:
-      isWelcomePageShown
-      ?RepositoryProvider<AuthenticationBloc>(
-      create: (context) => AuthenticationBloc(
-      userRepository:widget.userRepository
-      ),
-      child: BlocBuilder<AuthenticationBloc,AuthenticationState>(builder: (context,state){
-          if(state.status!=AuthenticationStatus.authenticated){
-          return registrationPage();
-          }else{
-        return  ChangeNotifierProvider(
-      create: (BuildContext context)=>UiProvider()..init(),
-      child: Consumer<UiProvider>(
-        builder: (context, UiProvider notifier, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Itube',
-            //By default theme setting, you can also set system
-            // when your mobile theme is dark the app also become dark
-
-            themeMode: notifier.isDark? ThemeMode.dark : ThemeMode.light,
-
-            //Our custom theme applied
-            darkTheme: notifier.isDark? notifier.darkTheme : notifier.lightTheme,
-
-            theme: ThemeData(
-              primaryColor: Colors.red.shade800,
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.red.shade800),
-              useMaterial3: useMaterial3,
-            ),
-            home: MyApp());}));
-          }
-          
-        })):
+      !isWelcomePageShown
+      ?
           Scaffold(
          body: SingleChildScrollView(
   child: SizedBox(
@@ -171,7 +147,18 @@ void initState() {
                   child: Text("Start the way to Jannah...", style: TextStyle(color: Colors.red),),
                 )),
               ),
-            )
+            ):RepositoryProvider<AuthenticationBloc>(
+      create: (context) => AuthenticationBloc(
+      userRepository:widget.userRepository
+      ),
+      child: BlocBuilder<AuthenticationBloc,AuthenticationState>(builder: (context,state){
+          if(state.status!=AuthenticationStatus.authenticated){
+          return registrationPage();
+          }else{
+        return  MyApp();
+          }
+          
+        }))
        
     );
   }

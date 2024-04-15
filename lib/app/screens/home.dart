@@ -51,7 +51,27 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-     return MyHomePage(title: 'ITUBE',);
+     return ChangeNotifierProvider(
+      create: (BuildContext context)=>UiProvider()..init(),
+      child: Consumer<UiProvider>(
+        builder: (context, UiProvider notifier, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Itube',
+            //By default theme setting, you can also set system
+            // when your mobile theme is dark the app also become dark
+
+            themeMode: notifier.isDark? ThemeMode.dark : ThemeMode.light,
+
+            //Our custom theme applied
+            darkTheme: notifier.isDark? notifier.darkTheme : notifier.lightTheme,
+
+            theme: ThemeData(
+              primaryColor: Colors.red.shade800,
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.red.shade800),
+              useMaterial3: useMaterial3,
+            ),
+            home:MyHomePage(title: 'ITUBE',));}));
   }
 }
 
