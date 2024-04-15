@@ -12,6 +12,8 @@ import 'package:itube/app/screens/home/pages/homePage.dart';
 import 'package:itube/app/screens/home/pages/profile.dart';
 import 'package:itube/app/screens/registrationPage.dart';
 import 'package:itube/app/screens/welcome_screen.dart';
+import 'package:itube/theme_provider/provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,12 +73,30 @@ void initState() {
           if(state.status!=AuthenticationStatus.authenticated){
           return registrationPage();
           }else{
-        return MyApp();
+        return  ChangeNotifierProvider(
+      create: (BuildContext context)=>UiProvider()..init(),
+      child: Consumer<UiProvider>(
+        builder: (context, UiProvider notifier, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Itube',
+            //By default theme setting, you can also set system
+            // when your mobile theme is dark the app also become dark
+
+            themeMode: notifier.isDark? ThemeMode.dark : ThemeMode.light,
+
+            //Our custom theme applied
+            darkTheme: notifier.isDark? notifier.darkTheme : notifier.lightTheme,
+
+            theme: ThemeData(
+              primaryColor: Colors.red.shade800,
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.red.shade800),
+              useMaterial3: useMaterial3,
+            ),
+            home: MyApp());}));
           }
           
-        }
-      ),
-    ):
+        })):
           Scaffold(
          body: SingleChildScrollView(
   child: SizedBox(

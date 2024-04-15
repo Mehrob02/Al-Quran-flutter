@@ -39,8 +39,8 @@ if(MediaQuery.of(context).size.width>400&&MediaQuery.of(context).size.height<400
  kDebugMode?
  ColorFiltered(
     colorFilter:ColorFilter.mode(
-      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(136, 233, 201, 132):Color.fromARGB(255, 52, 38, 28),
-      BlendMode.dstATop
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(135, 215, 187, 127):Color.fromARGB(255, 49, 37, 29),
+      BlendMode.colorBurn
       ),
       child: Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png',))
  : ColorFiltered(
