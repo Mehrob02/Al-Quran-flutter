@@ -38,9 +38,9 @@ void main() async {
     theme: ThemeData(
       primaryColor: Colors.red,
     ),                 
-  home:appWiev(FirebaseUserRepo())
+ home:WelcomeScreen(userRepository: FirebaseUserRepo(),)
+   //home: ListenQuran(),
  )
-   
   );
 }
 

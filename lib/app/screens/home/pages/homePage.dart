@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:itube/app/screens/home/screens/Settings.dart';
-import 'package:itube/app/screens/home/screens/components/reader_viewer.dart';
+import 'package:itube/app/screens/home/screens/reader_viewer.dart';
 import 'package:itube/app/screens/home/screens/components/shadow_box.dart';
 import 'package:itube/app/screens/home/screens/reader.dart';
 import 'package:itube/Surahs/surahs.dart';
@@ -101,7 +101,7 @@ Container listItem(BuildContext context,int index){
       onPressed: () {
       Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => reader(surahs[index],ayahs[index],0)),
+          MaterialPageRoute(builder: (context) => ReaderViewer(surah:surahs[index],ayahs:ayahs[index],indexToScroll:0)),
           );
     }, child: Card(
       child: Padding(
@@ -138,7 +138,7 @@ class _HomePageState extends State<homePage> {
     initTranslationLanguage();
     _loadViewSettings();
   }
-  void _loadViewSettings() async{
+  Future<void> _loadViewSettings() async{
     viewSettings = await _getViewSettings();
     setState(() {});
   }
@@ -173,7 +173,7 @@ class _HomePageState extends State<homePage> {
   }
   @override
 Widget build(BuildContext context) {
-  return  Scaffold(
+    return Scaffold(
     floatingActionButton: FloatingActionButton(
       shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(40)),
       backgroundColor: Colors.red[600],
@@ -222,7 +222,7 @@ Widget build(BuildContext context) {
           ),
         ],
       ),
-    ),),
+    ),
+    ),
   );
-}
-}
+}}

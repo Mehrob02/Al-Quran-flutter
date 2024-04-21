@@ -23,9 +23,9 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin {
+  
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     _loadIsWelcomePageShown();
     Future.delayed(Duration(seconds: 3),()async{
      !isWelcomePageShown?Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>appWiev(FirebaseUserRepo())))
@@ -57,15 +57,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
               colorScheme: ColorScheme.fromSeed(seedColor: Theme.of(context).primaryColor),
               useMaterial3: useMaterial3,
             ),
-            home: MyApp());}));
-          }
+            home: MyApp()
           
-        }
-      ),
-    )))
-     ;
-    });
-    inituseMaterial3();
+          );}));}})))
+          );});
     super.initState();
   }
   void _loadIsWelcomePageShown() async {
@@ -98,7 +93,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
           child:Image.asset(kDebugMode?'welcomeIcon.jpg':'assets/welcomeIcon.jpg',fit: BoxFit.cover),
           ),
           SizedBox(height: 20,),
-          Text("اَلسَّلَامُ عَلَيْكُم", style: TextStyle(fontFamily: "quran", fontSize: 35, color: Colors.white),)
+          Text("اَلسَّلَامُ عَلَيْكُم", style: TextStyle(fontFamily: "quran", fontSize: 35, color: Colors.white),),
         ]),
       ),
     );

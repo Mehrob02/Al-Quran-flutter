@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:itube/app/screens/home/screens/listen_quran_screen.dart';
+import 'package:itube/app/screens/home/screens/reader_viewer.dart';
 import 'package:itube/theme_provider/provider.dart';
 import 'package:itube/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:itube/main.dart';
@@ -30,8 +31,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../blocs/authentification_bloc/authentification_bloc.dart';
+import '../app_wiev.dart';
 import 'home/screens/models/playlist_provider.dart';
- bool useMaterial3 = true;
+ 
  String? locationCity;
  String? locationCountry;
  List favoriteSurahs=[];
@@ -71,7 +73,7 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.red.shade800),
               useMaterial3: useMaterial3,
             ),
-            home:MyHomePage(title: 'ITUBE',));}));
+            home: MyHomePage(title: 'ITUBE',));}));
   }
 }
 
@@ -100,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<String> _getCurrentUser() async{
   var prefs = await  SharedPreferences.getInstance();
-  return prefs.getString("currentUser") ?? _userName!;
+  return prefs.getString("currentUser") ?? "Unknown";
   }
 
  Future<void> _setCurrentUser() async {
@@ -144,20 +146,25 @@ Future<void> loadData() async {
   } void _initStateAsync() async{
   await translations.loadTranslations();
   }
+   void _loadReadingView()async{
+      var prefs = await SharedPreferences.getInstance();
+  isReaderView=prefs.getBool("readingView")??true;
+  } 
   @override
   void initState() {  
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent)
   );  
+  loadBookmakJson();
   
   SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,]);
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 initConnectivity();
+_loadReadingView();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
    _initStateAsync();
-loadBookmakJson();
 _getCurrentUser();
    // inituseMaterial3();
     _loadViewSettings();
@@ -251,159 +258,159 @@ _getCurrentUser();
    return BlocProvider<SignInBloc>(
    create: (context)=>SignInBloc(
                         userRepository: context.read<AuthenticationBloc>().userRepository),
-  child: Scaffold(
-    drawer: Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            decoration: const BoxDecoration(
-                color: Colors.red,
-                ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-              _isLoading
-          ? Center(child: CircularProgressIndicator()) // Show loading indicator
-          :  Text(
-                 _userName!,
-                  style: TextStyle(color: Colors.white,fontSize: 25),
-                ),
-                Text(FirebaseAuth.instance.currentUser!.email??"connection error",style: const TextStyle(color: Colors.white),)
-              ],
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: Text(translations.translate('Settings', currentLanguage)),
-            onTap: () => {
-              Navigator.pop(context),
-              Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const settings()),
-          )
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.border_color),
-            title:  Text(translations.translate('Feedback', currentLanguage)),
-            onTap: () => {
-              Navigator.pop(context),
-              Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => feedback()),
-          )
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.handshake_outlined),
-            title: Text(translations.translate('Support', currentLanguage)),
-            onTap: () => {
-              Navigator.pop(context),
-              Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const support()),
-          )
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.headphones),
-            title: Text('Listen Quran'),
-            onTap: () => {
-              Navigator.pop(context),
-              debugPrint(_connectionStatus),
-             if(_connectionStatus!='Failed to get connectivity.'){
-              Navigator.push(
-          context,
-           MaterialPageRoute(builder:(context) =>  ListenQuran()
-           )   
-          )}else{
-             ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("$_connectionStatus\nPlease check your internet connection."),
-          ))
-          }
-            },
-          ),
-        ],
-      ),
-    ),
-    appBar:
-    _currentIndex!=2? 
-    AppBar(
-      backgroundColor: Colors.red.shade800,
-      foregroundColor: Colors.white,
-      title: Text(widget.title,style: const TextStyle(color: Colors.white),),
-      actions:[
-       _currentIndex==0? IconButton(
-          onPressed: (){
-            debugPrint(MediaQuery.of(context).size.height.toString());
-            showSearch(
-              context: context,
-               delegate: CustomSearchDelegate());
-          },
-         icon: const Icon(Icons.search)):const SizedBox()
-      ],
-    )
-    :AppBar(
-      backgroundColor: Colors.red.shade800,
-      foregroundColor: Colors.white,
-      centerTitle: true,
-      title: ElevatedButton.icon(
-        style: ButtonStyle(
-          foregroundColor: MaterialStatePropertyAll(Colors.white),
-          backgroundColor: MaterialStatePropertyAll(Colors.red.shade800,)
-        ),
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (builder)=>CSC_Picker()) );
-      },
-       icon: Icon(Icons.location_on), 
-       label: Text('$locationCity, $locationCountry')),
-      elevation: 0,
-    ),
-      body: _children[_currentIndex],
-      bottomNavigationBar:  Container(
-            color: Colors.red.shade800,
-            child: Padding(
-              padding: MediaQuery.of(context).size.width>MediaQuery.of(context).size.height?const EdgeInsets.all(0):const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13),
-              child: GNav(
-                style: GnavStyle.google,
-              curve: Curves.linear,
-                backgroundColor: Colors.red.shade800,
-                activeColor: Colors.white,
-                tabBackgroundColor: Colors.grey.withOpacity(0.5),
-                padding: const EdgeInsets.all(14),
-                selectedIndex: _currentIndex,
-                onTabChange: onTabTapped,
-                gap: 8,
-                tabs: [
-                  GButton(
-                    icon: Icons.home,
-                    iconColor: Colors.white,
-                    text: translations.translate("Home", currentLanguage),
+  child:
+     Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                  color: Colors.red,
                   ),
-                  GButton(
-                    icon: Icons.book,
-                    iconColor: Colors.white,
-                    text: translations.translate("Bookmarks", currentLanguage),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                _isLoading
+            ? Center(child: CircularProgressIndicator()) // Show loading indicator
+            :  Text(
+                   _userName!,
+                    style: TextStyle(color: Colors.white,fontSize: 25),
                   ),
-                  GButton(
-                    icon: Icons.access_time_rounded,
-                    iconColor: Colors.white,
-                    text: translations.translate("Salah time", currentLanguage),
-                  ),
-                  GButton(
-                    icon: Icons.manage_accounts_sharp,
-                    iconColor: Colors.white,
-                    text: translations.translate("You", currentLanguage),
-                  ),
+                  Text(FirebaseAuth.instance.currentUser!.email??"connection error",style: const TextStyle(color: Colors.white),)
                 ],
               ),
             ),
-          )
-    )
-    );
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: Text(translations.translate('Settings', currentLanguage)),
+              onTap: () => {
+                Navigator.pop(context),
+                Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const settings()),
+            )
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.border_color),
+              title:  Text(translations.translate('Feedback', currentLanguage)),
+              onTap: () => {
+                Navigator.pop(context),
+                Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => feedback()),
+            )
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.handshake_outlined),
+              title: Text(translations.translate('Support', currentLanguage)),
+              onTap: () => {
+                Navigator.pop(context),
+                Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const support()),
+            )
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.headphones),
+              title: Text('Listen Quran'),
+              onTap: () => {
+                Navigator.pop(context),
+                debugPrint(_connectionStatus),
+               if(_connectionStatus!='Failed to get connectivity.'){
+                Navigator.push(
+            context,
+             MaterialPageRoute(builder:(context) =>  ListenQuran()
+             )   
+            )}else{
+               ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("$_connectionStatus\nPlease check your internet connection."),
+            ))
+            }
+              },
+            ),
+          ],
+        ),
+      ),
+      appBar:
+      _currentIndex!=2? 
+      AppBar(
+        backgroundColor: Colors.red.shade800,
+        foregroundColor: Colors.white,
+        title: Text(widget.title,style: const TextStyle(color: Colors.white),),
+        actions:[
+         _currentIndex==0? IconButton(
+            onPressed: (){
+              debugPrint(MediaQuery.of(context).size.height.toString());
+              showSearch(
+                context: context,
+                 delegate: CustomSearchDelegate());
+            },
+           icon: const Icon(Icons.search)):const SizedBox()
+        ],
+      )
+      :AppBar(
+        backgroundColor: Colors.red.shade800,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        title: ElevatedButton.icon(
+          style: ButtonStyle(
+            foregroundColor: MaterialStatePropertyAll(Colors.white),
+            backgroundColor: MaterialStatePropertyAll(Colors.red.shade800,)
+          ),
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (builder)=>CSC_Picker()) );
+        },
+         icon: Icon(Icons.location_on), 
+         label: Text('$locationCity, $locationCountry')),
+        elevation: 0,
+      ),
+        body:_children[_currentIndex],
+        bottomNavigationBar:  Container(
+              color: Colors.red.shade800,
+              child: Padding(
+                padding: MediaQuery.of(context).size.width>MediaQuery.of(context).size.height?const EdgeInsets.all(0):const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13),
+                child: GNav(
+                  style: GnavStyle.google,
+                curve: Curves.linear,
+                  backgroundColor: Colors.red.shade800,
+                  activeColor: Colors.white,
+                  tabBackgroundColor: Colors.grey.withOpacity(0.5),
+                  padding: const EdgeInsets.all(14),
+                  selectedIndex: _currentIndex,
+                  onTabChange: onTabTapped,
+                  gap: 8,
+                  tabs: [
+                    GButton(
+                      icon: Icons.home,
+                      iconColor: Colors.white,
+                      text: translations.translate("Home", currentLanguage),
+                    ),
+                    GButton(
+                      icon: Icons.book,
+                      iconColor: Colors.white,
+                      text: translations.translate("Bookmarks", currentLanguage),
+                    ),
+                    GButton(
+                      icon: Icons.access_time_rounded,
+                      iconColor: Colors.white,
+                      text: translations.translate("Salah time", currentLanguage),
+                    ),
+                    GButton(
+                      icon: Icons.manage_accounts_sharp,
+                      iconColor: Colors.white,
+                      text: translations.translate("You", currentLanguage),
+                    ),
+                  ],
+                ),
+              ),
+            )
+     ));
   }
 }
 

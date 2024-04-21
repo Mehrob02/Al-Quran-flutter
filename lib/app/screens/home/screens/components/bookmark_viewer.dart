@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:itube/app/screens/home.dart';
 import 'package:itube/app/screens/home/pages/bookMarksPage.dart';
 import 'package:itube/app/screens/home/pages/homePage.dart';
+import 'package:itube/app/screens/home/screens/reader_viewer.dart';
 import 'package:itube/app/screens/home/screens/reader.dart';
+import 'package:itube/app/screens/home/screens/reader_new.dart';
 import 'package:itube/my_test/mytestfile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,10 +39,10 @@ class _BookmarkBuilderState extends State<BookmarkBuilder> {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => reader(
-        widget.bookmarkItem[0],
-        ayahs[surahs.indexOf(widget.bookmarkItem[0])],
-        0,
+      builder: (context) => ReaderViewer(
+       surah: widget.bookmarkItem[0],
+       ayahs: ayahs[surahs.indexOf(widget.bookmarkItem[0])],
+       indexToScroll: 0,
       ),
     ),
   );

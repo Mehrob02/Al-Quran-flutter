@@ -1,11 +1,11 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:itube/app/screens/home/screens/reader_viewer.dart';
+import 'package:itube/app/app_wiev.dart';
 import 'package:itube/theme_provider/provider.dart';
 import 'package:itube/Surahs/alFatiha.dart';
 import 'package:itube/app/screens/home/pages/bookMarksPage.dart';
@@ -22,20 +22,28 @@ class settings extends StatefulWidget {
   State<settings> createState() => _settingsState();
 }
 double fontSize =20;
-
 class _settingsState extends State<settings>
     with SingleTickerProviderStateMixin {
       String? _userName;
   late AnimationController _controller;
-
+   
   @override
   void initState(){
     _initStateAsync();
     super.initState();
    getUserData();
     initFontSize();
+    _loadReadingView();
     _controller = AnimationController(vsync: this);
   }
+  Future<bool> _setReadingView()async{
+      var prefs = await SharedPreferences.getInstance();
+  return prefs.setBool("readingView",isReaderView);
+  } 
+  void _loadReadingView()async{
+      var prefs = await SharedPreferences.getInstance();
+  isReaderView=prefs.getBool("readingView")??true;
+  } 
   void _initStateAsync() async{
   await translations.loadTranslations();
   }
@@ -191,13 +199,13 @@ Future<void> getUserData() async {
   Future <void> saveBookmarkData(BuildContext context) async{
   await showDialog(context: context, builder:(BuildContext context) {
      return  AlertDialog(
-       title: Text('Backup Bookmarks'),
+       title: const Text('Backup Bookmarks'),
        content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
          children: [
-          Text("Note, that this will erise your previous savings\nAre  you sure?"),
-          SizedBox(height: 10,),
+          const Text("Note, that this will erise your previous savings\nAre  you sure?"),
+          const SizedBox(height: 10,),
            Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -205,7 +213,7 @@ Future<void> getUserData() async {
                TextButton(onPressed: () {
                                 Navigator.of(context).pop(false);
                },
-               child: Text("Go Back"),),
+               child: const Text("Go Back"),),
                TextButton(onPressed: () {
               try {
                               saveData(jsonString);
@@ -228,7 +236,7 @@ Future<void> getUserData() async {
                             }
                             Navigator.of(context).pop();
            },
-           child: Text("Backup"),),
+           child: const Text("Backup"),),
              ],
            ),
          ],
@@ -244,11 +252,11 @@ Future<void> getUserData() async {
     barrierDismissible: false, // Prevent users from dismissing the dialog
     builder: (context) {
       return AlertDialog(
-        title: Text("Checking database..."),
+        title: const Text("Checking database..."),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
+            const CircularProgressIndicator(),
           ],
         ),
       );
@@ -268,22 +276,22 @@ Future<void> getUserData() async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Upload Bookmarks'),
+        title: const Text('Upload Bookmarks'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Are you sure? "),
-            SizedBox(height: 10,),
+            const Text("Are you sure? "),
+            const SizedBox(height: 10,),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("Upload Status: "),
+                const Text("Upload Status: "),
                 Container(
                   child: snapshot['bookMarks'] == null
-                      ? Text("You don't have saved data")
-                      : Text("Ready to restore Data"),
+                      ? const Text("You don't have saved data")
+                      : const Text("Ready to restore Data"),
                 ),
               ],
             ),
@@ -296,7 +304,7 @@ Future<void> getUserData() async {
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
-                        child: Text("Go Back"),
+                        child: const Text("Go Back"),
                       ),
                       TextButton(
                         onPressed: () {
@@ -307,7 +315,7 @@ Future<void> getUserData() async {
                           }
                           Navigator.of(context).pop(true);
                         },
-                        child: Text("Upload"),
+                        child: const Text("Upload"),
                       ),
                     ],
                   )
@@ -315,7 +323,7 @@ Future<void> getUserData() async {
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
-                    child: Text("Go Back"),
+                    child: const Text("Go Back"),
                   ),
           ],
         ),
@@ -335,7 +343,7 @@ Future<void> getUserData() async {
         centerTitle: true,
         title: Text(
         translations.translate("Settings", currentLanguage),
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -351,17 +359,17 @@ Future<void> getUserData() async {
                   padding: const EdgeInsets.all(16),
                   child: Column(
             children: [
-              Card(
+             !isReaderView? Card(
                 child: Column(
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
                       alignment: Alignment.center,
                      child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child:  Text(
                         translations.translate("AYAHS FONT SETTINGS", currentLanguage),
-                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30,),),
+                        style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 30,),),
                     ),
                     ),
                     Padding(
@@ -386,14 +394,14 @@ Future<void> getUserData() async {
                           },
                           style: ButtonStyle(
                       backgroundColor:MaterialStateProperty.all(Colors.red),
-                    ), child: Text(translations.translate("Smaller", currentLanguage),style: TextStyle(color: Colors.white),),
+                    ), child: Text(translations.translate("Smaller", currentLanguage),style: const TextStyle(color: Colors.white),),
                           ),
                           ElevatedButton(onPressed: (){
                             _incrementFont();
                           },
                           style: ButtonStyle(
                        backgroundColor:MaterialStateProperty.all(Colors.red),
-                    ), child: Text(translations.translate("Larger", currentLanguage),style: TextStyle(color: Colors.white)),
+                    ), child: Text(translations.translate("Larger", currentLanguage),style: const TextStyle(color: Colors.white)),
                     
                           ),
                           
@@ -404,7 +412,7 @@ Future<void> getUserData() async {
                     
                   ],
                 ),
-              ),
+              ):const SizedBox(),
               Card(
                 child: Column(
                  children: [
@@ -468,8 +476,8 @@ Future<void> getUserData() async {
                           saveBookmarkData(context);
                         
                         }, 
-                        child: Text("Backup Bookmark data")),
-                        SizedBox(height: 5,),
+                        child: const Text("Backup Bookmark data")),
+                        const SizedBox(height: 5,),
 TextButton(
   onPressed: () async {
     try {
@@ -482,7 +490,7 @@ TextButton(
 
       if (!snapshot.exists) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("You don't have saved data"),
           ),
         );
@@ -498,16 +506,30 @@ TextButton(
       );
     }
   },
-  child: Text("Upload Bookmark data"),
-)
+  child: const Text("Upload Bookmark data"),
+),
+
 
                       ],
-                    )
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text("Current mode: ${!isReaderView?"List":"Book"}"),
+              TextButton(onPressed: (){
+                setState(() {
+    isReaderView=!isReaderView;
+    _setReadingView();
+  });
+              }, child: const Text("Change"))
+            ],
           
+          )
             ],
                   ),
                   ),
-          );}
+          );
+          }
         )
       );
   }

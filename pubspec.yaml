@@ -84,6 +84,7 @@ dependencies:
   url_launcher: ^6.1.11
   awesome_notifications: ^0.8.2
   quick_actions: ^1.0.6
+  subtitle_wrapper_package: ^2.2.0
 
 dev_dependencies:
   flutter_test:

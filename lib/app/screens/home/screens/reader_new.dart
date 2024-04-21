@@ -22,33 +22,33 @@ if(MediaQuery.of(context).size.width>400&&MediaQuery.of(context).size.height<400
   kDebugMode?
    ColorFiltered(
     colorFilter:ColorFilter.mode(
-      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(136, 233, 201, 132):Color.fromARGB(255, 52, 38, 28),
-      BlendMode.dstATop
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(135, 215, 187, 127):Color.fromARGB(0, 0, 0, 0),
+  BlendMode.color
       ),
-      child:Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png', fit: BoxFit.fitWidth,))
+      child:Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png', fit: BoxFit.fitWidth,color: Theme.of(context).brightness!=Brightness.dark?Colors.black: Colors.white,))
    :
   ColorFiltered(
     colorFilter:ColorFilter.mode(
-      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(136, 233, 201, 132):Color.fromARGB(255, 52, 38, 28),
-      BlendMode.dstATop
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(135, 215, 187, 127):Color.fromARGB(0, 0, 0, 0),
+     BlendMode.color
       ),
-      child: Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png', fit: BoxFit.fitWidth,)
+      child: Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png', fit: BoxFit.fitWidth,color: Theme.of(context).brightness!=Brightness.dark?Colors.black: Colors.white,)
   );
 }else{
  return 
  kDebugMode?
  ColorFiltered(
     colorFilter:ColorFilter.mode(
-      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(135, 215, 187, 127):Color.fromARGB(255, 49, 37, 29),
-      BlendMode.colorBurn
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(135, 215, 187, 127):Color.fromARGB(0, 0, 0, 0),
+     BlendMode.color
       ),
-      child: Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png',))
+      child: Image.asset(index<9?'quran-images/page00${index+1}.png':index<99?'quran-images/page0${index+1}.png':'quran-images/page${index+1}.png',color:Theme.of(context).brightness!=Brightness.dark?Colors.black: Colors.white,))
  : ColorFiltered(
-    colorFilter:ColorFilter.mode(
-      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(136, 233, 201, 132):Color.fromARGB(255, 52, 38, 28),
-      BlendMode.dstATop
+   colorFilter:ColorFilter.mode(
+      Theme.of(context).brightness!=Brightness.dark?Color.fromARGB(135, 215, 187, 127):Color.fromARGB(0, 0, 0, 0),
+      BlendMode.color
       ),
-      child:Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png',));
+      child:Image.asset(index<9?'assets/quran-images/page00${index+1}.png':index<99?'assets/quran-images/page0${index+1}.png':'assets/quran-images/page${index+1}.png',color: Theme.of(context).brightness!=Brightness.dark?Colors.black: Colors.white,));
 }
         
         
@@ -113,6 +113,8 @@ List <String> _getTitles(int page){
     return SafeArea(
       child: Scaffold(
         body: Stack(
+          fit: StackFit.expand,
+          alignment: Alignment.topCenter,
           children:[
             PageView.builder(
             controller: pageController,

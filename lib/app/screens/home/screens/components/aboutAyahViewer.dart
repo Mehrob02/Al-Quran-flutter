@@ -41,7 +41,7 @@ Future initTranslationLanguage() async{
   Widget build(BuildContext context) {
     return ayahtranslation == null
             ? const Center(child: CircularProgressIndicator())
-            : Text(currentLanguage=='en'?"${ayahtranslation![widget.index].ayahTranslation}\n":"${surahsTranslationRu[widget.surah][widget.index]}");
+            : Text(currentLanguage=="en"? "${ayahtranslation![widget.index].ayahTranslation}\n":"${surahsTranslationRu[widget.surah][widget.index]}");
   }
 }
 

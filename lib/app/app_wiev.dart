@@ -19,7 +19,9 @@ import 'package:user_repository/user_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 
+import 'screens/home/pages/bookMarksPage.dart';
 
+bool useMaterial3 = true;
 class appWiev extends StatefulWidget {
   final UserRepository userRepository;
   appWiev(this.userRepository, {super.key});
@@ -36,16 +38,26 @@ class _appWievState extends State<appWiev> {
 @override
 void initState() {
   _loadIsWelcomePageShown();
+  loadBookmakJson();
   super.initState();
-  inituseMaterial3();
 }
-
+Future loadBookmakJson() async{
+    jsonString = await _getBookmakJson();
+  }  
+ Future<String> _getBookmakJson() async{
+    var prefs = await  SharedPreferences.getInstance();
+  return prefs.getString("bookmakJson")?? '''
+    {
+      "mark":[]
+    }
+  ''';
+  }  
 void _loadIsWelcomePageShown() async {
-  await Future.microtask(() async {
+  
     isWelcomePageShown = await _getIsWelcomePageShown();
     setState(() {}); // Обновляем виджет после загрузки значения
-  });
-}
+  }
+  
 
 Future<void> inituseMaterial3() async {
   await Future.microtask(() async {
@@ -65,12 +77,7 @@ Future<void> inituseMaterial3() async {
   }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.red,
-      ),
-      home:
+    return
       !isWelcomePageShown
       ?
           Scaffold(
@@ -147,18 +154,18 @@ Future<void> inituseMaterial3() async {
                   child: Text("Start the way to Jannah...", style: TextStyle(color: Colors.red),),
                 )),
               ),
-            ):RepositoryProvider<AuthenticationBloc>(
+            ):
+            RepositoryProvider<AuthenticationBloc>(
       create: (context) => AuthenticationBloc(
       userRepository:widget.userRepository
       ),
       child: BlocBuilder<AuthenticationBloc,AuthenticationState>(builder: (context,state){
           if(state.status!=AuthenticationStatus.authenticated){
           return registrationPage();
-          }else{
-        return  MyApp();
+          }else {
+         return MyApp();
           }
-          
-        }))
+        })
        
     );
   }
